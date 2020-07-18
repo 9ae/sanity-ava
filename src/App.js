@@ -1,37 +1,84 @@
 import React from 'react';
 import './App.css';
 
-const data = [
-  { name: "field 0", type: "input-text", on: [
-    {name: "Buffy", color: "#448AFF"}
-  ]},
-  { name: "field 1", type: "input-text", on: [{name: "Willow", color: "#FF3D00"},{name: "Xander", color: "#64DD17"}]},
-  { name: "field 2", type: "textarea", on: []},
-  { name: "field 3", type: "input-text", on: [{name: "Giles", color: "#FFEA00"},]},
-  { name: "field 4", type: "textarea", on: [{name: "Drusilla", color: "#7C4DFF"},{name: "Angel", color: "#64FFDA"},{name: "Spike", color: "#FF4081"}]},
-  { name: "field 5", type: "input-text", on: [{name: "Tara", color: "#69F0AE"}]},
-  { name: "field 6", type: "input-text", on: [{name: "Cordelia", color: "#FFAB40"},{name: "Faith", color: "#ff1744"}]},
-  { name: "field 7", type: "textarea", on: [{name: "Oz", color: "#18FFFF"}]},
-];
-
 class App extends React.Component {
 
   constructor(props){
     super(props);
     this.state = {
-      fields: data,
       message: "hey there",
-      userColorMaps: {}
+      lastAboveIndex: -1,
+      lastBelowIndex: this.props.fields.length,
+      initIndex: false
+    }
+    this.refRows = []
+    for(var i=0; i<this.props.fields.length; i++){
+      this.refRows[i] = React.createRef();
     }
   }
 
+  componentDidMount() {
+    const observer = new IntersectionObserver((watching, observer) => {
+
+      if(!this.state.initIndex){
+        watching.forEach(row => {
+          const indexStr = row.target.getAttribute('data-index');
+          console.log(`${indexStr} changed`,row)
+          if(!row.isIntersecting){
+            const index = parseInt(indexStr);
+            if(row.boundingClientRect.y < 0){
+              // is above fold
+              if(index > this.state.lastAboveIndex){
+                this.setState({lastAboveIndex : index})
+              }
+            } else {
+              // is below fold
+              if(index < this.state.lastBelowIndex){
+                this.setState({lastBelowIndex: index})
+              }
+            }
+          }
+        })
+        this.setState({initIndex: true})
+      } else {
+        watching.forEach(row => {
+          const indexStr = row.target.getAttribute('data-index');
+          console.log(`${indexStr} changed`,row)
+            const index = parseInt(indexStr);
+            if(row.boundingClientRect.y < 0){
+              // is above fold
+              if(index !== this.state.lastAboveIndex){
+                this.setState({lastAboveIndex : index})
+              }
+            } else {
+              // is below fold
+              if(index !== this.state.lastBelowIndex){
+                this.setState({lastBelowIndex: index})
+              }
+            }
+          
+        })
+      }
+    }, {threshold: 0.5})
+
+    this.refRows.forEach((e) => {
+      observer.observe(e.current)
+    })
+  }
+
   render() {
-  const fields = this.state.fields.map(f => (<div class="row">
+  const fields = this.props.fields.map( (f, i) => (<div key={i} data-index={i} className="row" ref={this.refRows[i]}>
     <label>{f.name}</label>
-  <div class="presence">{f.on.map( u => (<div class="avatar" style={{backgroundColor : u.color }}>{u.name.charAt(0)}</div>) )}</div>
+  <div className="presence">{f.on.map( u => (<div key={u.name} className="avatar" style={{backgroundColor : u.color }}>{u.name.charAt(0)}</div>) )}</div>
     {f.type === "textarea" ? (<textarea></textarea>) : (<input type="text" />) }
   </div>));
-    return (<div class="container">{fields}</div>);
+    return (
+      <div id="page">
+        <div className="above-fold">{this.state.lastAboveIndex}</div>
+        <div className="container">{fields}</div>
+        <div className="below-fold">{this.state.lastBelowIndex}</div>
+      </div>
+    );
   }
 }
 

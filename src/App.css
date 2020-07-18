@@ -37,11 +37,20 @@
   }
 }
 
+#page {
+  width: 100vw;
+  height: 100vh;
+  overflow: scroll;
+}
+
 
 .container {
   width: 90%;
   max-width: 800px;
   margin: 50px auto;
+  position: relative;
+  top:0;
+  left:0;
 }
 
 .container .row {
@@ -92,6 +101,25 @@
   /* to remove */
   text-align: center;
   margin-left: -10px;
+}
+
+.above-fold, .below-fold {
+  position: fixed;
+  background-color: white;
+  display: block;
+  z-index: 5;
+  right: 5%;
+
+  color:red;
+}
+
+.above-fold {
+  top: 0;
+}
+
+
+.below-fold {
+  bottom: 0;
 }
 
 /*
