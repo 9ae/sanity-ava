@@ -17,49 +17,53 @@ class App extends React.Component {
     }
   }
 
-  componentDidMount() {
-    const observer = new IntersectionObserver((watching, observer) => {
-
-      if(!this.state.initIndex){
-        watching.forEach(row => {
-          const indexStr = row.target.getAttribute('data-index');
-          console.log(`${indexStr} changed`,row)
-          if(!row.isIntersecting){
-            const index = parseInt(indexStr);
-            if(row.boundingClientRect.y < 0){
-              // is above fold
-              if(index > this.state.lastAboveIndex){
-                this.setState({lastAboveIndex : index})
-              }
+  onIntersectChange = (watching, observer) => {
+    if(this.state.initIndex){ //check of index changes
+      watching.forEach(row => {
+        const indexStr = row.target.getAttribute('data-index');
+        console.log(`${indexStr} changed`,row)
+          const index = parseInt(indexStr);
+          if(row.boundingClientRect.y < 0){ // is above fold
+            if(row.isIntersecting){
+              this.setState({lastAboveIndex : index - 1})
             } else {
-              // is below fold
-              if(index < this.state.lastBelowIndex){
+              this.setState({lastAboveIndex: index})
+            }
+          } else { // is below fold
+              if(row.isIntersecting){ // row is now within view,
+                this.setState({lastBelowIndex: index + 1 })
+              } else {
                 this.setState({lastBelowIndex: index})
               }
+              
+          }
+        
+      })
+    } else { // init above and below fold indicies
+      watching.forEach(row => {
+        const indexStr = row.target.getAttribute('data-index');
+        console.log(`${indexStr} changed`,row)
+        if(!row.isIntersecting){
+          const index = parseInt(indexStr);
+          if(row.boundingClientRect.y < 0){
+            // is above fold
+            if(index > this.state.lastAboveIndex){
+              this.setState({lastAboveIndex : index})
+            }
+          } else {
+            // is below fold
+            if(index < this.state.lastBelowIndex){
+              this.setState({lastBelowIndex: index})
             }
           }
-        })
-        this.setState({initIndex: true})
-      } else {
-        watching.forEach(row => {
-          const indexStr = row.target.getAttribute('data-index');
-          console.log(`${indexStr} changed`,row)
-            const index = parseInt(indexStr);
-            if(row.boundingClientRect.y < 0){
-              // is above fold
-              if(index !== this.state.lastAboveIndex){
-                this.setState({lastAboveIndex : index})
-              }
-            } else {
-              // is below fold
-              if(index !== this.state.lastBelowIndex){
-                this.setState({lastBelowIndex: index})
-              }
-            }
-          
-        })
-      }
-    }, {threshold: 0.5})
+        }
+      })
+      this.setState({initIndex: true})
+    }
+  }
+
+  componentDidMount() {
+    const observer = new IntersectionObserver(this.onIntersectChange, {threshold: 0.8})
 
     this.refRows.forEach((e) => {
       observer.observe(e.current)
