@@ -71,16 +71,27 @@ class App extends React.Component {
   }
 
   render() {
-  const fields = this.props.fields.map( (f, i) => (<div key={i} data-index={i} className="row" ref={this.refRows[i]}>
+
+  const {fields} = this.props
+  const {lastAboveIndex, lastBelowIndex} = this.state
+
+  // TODO throw in its own component?
+  const renderAvatar = (u) => (<div key={u.name} className="avatar" style={{"--user-color": u.color}}>{u.name.charAt(0)}</div>)
+
+  const aboveUsers = lastAboveIndex !== -1 ? fields.slice(0, lastAboveIndex + 1).map(f => f.on).flat().map(renderAvatar) : "";
+
+  const belowUsers = lastBelowIndex !== fields.length ? fields.slice(lastBelowIndex).map(f => f.on).reverse().flat().map(renderAvatar) : ""
+
+  const fieldsView = fields.map( (f, i) => (<div key={i} data-index={i} className="row" ref={this.refRows[i]}>
     <label>{f.name}</label>
-  <div className="presence">{f.on.map( u => (<div key={u.name} className="avatar" style={{backgroundColor : u.color }}>{u.name.charAt(0)}</div>) )}</div>
+  <div className="presence">{f.on.map(renderAvatar)}</div>
     {f.type === "textarea" ? (<textarea></textarea>) : (<input type="text" />) }
   </div>));
     return (
       <div id="page">
-        <div className="above-fold">{this.state.lastAboveIndex}</div>
-        <div className="container">{fields}</div>
-        <div className="below-fold">{this.state.lastBelowIndex}</div>
+        <div className="above-fold">{aboveUsers}</div>
+        <div className="container">{fieldsView}</div>
+        <div className="below-fold">{belowUsers}</div>
       </div>
     );
   }
