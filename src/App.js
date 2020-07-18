@@ -63,6 +63,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    console.log('App componentDidMount')
     const observer = new IntersectionObserver(this.onIntersectChange, {threshold: 0.8})
 
     this.refRows.forEach((e) => {
