@@ -36,3 +36,75 @@
     transform: rotate(360deg);
   }
 }
+
+
+.container {
+  width: 90%;
+  max-width: 800px;
+  margin: 50px auto;
+}
+
+.container .row {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+
+  margin-top: 50px;
+}
+
+.container .row label {
+  width: 120px;
+  font-size: 1.5em;
+}
+
+.container .row .presence {
+  width: calc(100% - 120px);
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row-reverse;
+}
+
+.container .row input,
+.container .row textarea {
+  width: 100%;
+  outline: 0;
+  border: 1px solid #999;
+  border-radius: 4px;
+}
+
+.container .row input {
+  font-size: 1.5em;
+  height: 2.0em;
+}
+
+.container .row textarea {
+  height: 100px;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  position: relative;
+
+  /* to remove */
+  text-align: center;
+  margin-left: -10px;
+}
+
+/*
+.avatar.tip::after {
+  content: " ";
+  background-color: skyblue;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  position: absolute;
+  bottom: -3px;
+  transition: bottom 1s;
+  left: calc(50% - 6px);
+}
+*/
