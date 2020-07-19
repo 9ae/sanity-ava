@@ -9,12 +9,13 @@ class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      message: "hey there",
       lastAboveIndex: -1,
       lastBelowIndex: this.props.fields.length,
-      initIndex: false, 
-      onEdge: []
+      initIndex: false,
+      popping: -1,
+      popped: -1
     }
+
     this.refRows = []
     for(var i=0; i<this.props.fields.length; i++){
       this.refRows[i] = React.createRef();
@@ -26,14 +27,18 @@ class App extends React.Component {
       watching.forEach(row => {
         const indexStr = row.target.getAttribute('data-index');
         console.log(`${indexStr} changed`,row)
-          const index = parseInt(indexStr);
-        if(row.intersectionRatio > 0.99){ // shows up in viewport
+        const index = parseInt(indexStr);
+        if(row.intersectionRatio === 1){ // shows up in viewport
           if(this.state.lastAboveIndex >= index){
             this.setState({lastAboveIndex : index - 1})
           } else if (this.state.lastBelowIndex <=index){
             this.setState({lastBelowIndex: index + 1 })
           }
-        } // TODO add inbetween state
+        } else if (row.intersectionRatio >= 0.9){
+          this.setState({popped: index})
+        } else if (row.intersectionRatio >= 0.5) { // about to pop into view
+          this.setState({popping: index})
+        }
         else { // hides in viewport
           if(row.boundingClientRect.y < 0){
             this.setState({lastAboveIndex : index})
@@ -43,10 +48,11 @@ class App extends React.Component {
         }
       })
     } else { // init above and below fold indicies
+      console.log('init visibility')
       watching.forEach(row => {
         const indexStr = row.target.getAttribute('data-index');
         console.log(`${indexStr} changed`,row)
-        if(row.intersectionRatio < 0.99){
+        if(!row.isIntersecting){
           const index = parseInt(indexStr);
           if(row.boundingClientRect.y < 0){
             // is above fold
@@ -66,8 +72,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    console.log('App componentDidMount')
-    const observer = new IntersectionObserver(this.onIntersectChange, {threshold: 0.5})
+    const observer = new IntersectionObserver(this.onIntersectChange, {threshold: [0.5, 0.9, 1.0]})
 
     this.refRows.forEach((e) => {
       observer.observe(e.current)
@@ -84,20 +89,27 @@ class App extends React.Component {
   render() {
 
   const {fields} = this.props
-  const {lastAboveIndex, lastBelowIndex} = this.state
+  const {lastAboveIndex, lastBelowIndex, popping, popped} = this.state
 
-  // TODO throw in its own component?
   const renderAvatar = (u) => (<Avatar key={u.name} user={u} />);
 
-  const aboveUsers = lastAboveIndex !== -1 ? fields.slice(0, lastAboveIndex + 1).map(f => f.on).flat().map(renderAvatar) : "";
+  const renderPreviewAvatar = (u) => (<Avatar key={u.name} user={u}
+    popping={popping === u.index}
+    popped={popped === u.index}  
+  />);
 
-  const belowUsers = lastBelowIndex !== fields.length ? fields.slice(lastBelowIndex).map(f => f.on).reverse().flat().map(renderAvatar) : ""
+  const aboveUsers = lastAboveIndex !== -1 ? fields.slice(0, lastAboveIndex + 1).map(f => f.on).reverse().flat().map(renderPreviewAvatar) : "";
+  const belowUsers = lastBelowIndex !== fields.length ? fields.slice(lastBelowIndex).map(f => f.on).flat().map(renderPreviewAvatar) : ""
 
   const fieldsView = fields.map( (f, i) => (<div key={i} className="row">
     <label>{f.name}</label>
-    <div className={classNames({'presence': true, 'off-screen': i <= lastAboveIndex || i >= lastBelowIndex})} data-index={i} ref={this.refRows[i]}>{f.on.map(renderAvatar)}</div>
+    <div className={classNames({'presence': true, 'off-screen': i <= lastAboveIndex || i >= lastBelowIndex})}
+      data-index={i} ref={this.refRows[i]}>
+    {f.on.map(renderAvatar)}</div>
     {f.type === "textarea" ? (<textarea></textarea>) : (<input type="text" />) }
   </div>));
+
+
     return (
       <div id="page">
         <div className="above-fold">{aboveUsers}</div>

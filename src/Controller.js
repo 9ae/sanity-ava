@@ -16,17 +16,17 @@ const fields = [
 ];
 
 const users = [
-  {name: "Buffy", color: "#4bc7eb", img: "avatar_01.png", aux:''},
-  {name: "Willow", color: "#a3e5d9", img: "avatar_02.png", aux:''},
-  {name: "Xander", color: "#6dccb8", img: "avatar_03.png", aux:''},
-  {name: "Giles", color: "#49c8eb", img: "avatar_04.png", aux:''},
-  {name: "Drusilla", color: "#ea5cbe", img: "avatar_05.png", aux:''},
-  {name: "Angel", color: "#8bc7eb", img: "avatar_06.png", aux:''},
-  {name: "Spike", color: "#7f6892", img: "avatar_07.png", aux:''},
-  {name: "Tara", color: "#a674a5", img: "avatar_08.png", aux:''},
-  {name: "Cordelia", color: "#ec6d4a", img: "avatar_09.png", aux:''},
-  {name: "Faith", color: "#9994d4", img: "avatar_10.png", aux:''},
-  {name: "Oz", color: "#fd8103", img: "avatar_11.png", aux:''}
+  {name: "Buffy", color: "#4bc7eb", img: "avatar_01.png", index:-1},
+  {name: "Willow", color: "#a3e5d9", img: "avatar_02.png", index:-1},
+  {name: "Xander", color: "#6dccb8", img: "avatar_03.png", index:-1},
+  {name: "Giles", color: "#49c8eb", img: "avatar_04.png", index:-1},
+  {name: "Drusilla", color: "#ea5cbe", img: "avatar_05.png", index:-1},
+  {name: "Angel", color: "#8bc7eb", img: "avatar_06.png", index:-1},
+  {name: "Spike", color: "#7f6892", img: "avatar_07.png", index:-1},
+  {name: "Tara", color: "#a674a5", img: "avatar_08.png", index:-1},
+  {name: "Cordelia", color: "#ec6d4a", img: "avatar_09.png", index:-1},
+  {name: "Faith", color: "#9994d4", img: "avatar_10.png", index:-1},
+  {name: "Oz", color: "#fd8103", img: "avatar_11.png", index:-1}
 ]
 
 function randomInt(max){
@@ -35,10 +35,10 @@ function randomInt(max){
 
 function createState(){
   var remainingUsers = [...users]
-  var data = fields.map(f => {
+  var data = fields.map((f, index) => {
     const count = randomInt(3);
     const atIndex = randomInt(remainingUsers.length - 1 - count)
-    const rmUsers = remainingUsers.splice(atIndex, count)
+    const rmUsers = remainingUsers.splice(atIndex, count).map(u => ({...u, index}))
     f.on = rmUsers
     return f
   })
@@ -61,12 +61,14 @@ class Controller extends React.Component {
           continue;
         }
         const newUser = remainingUsers.shift()
+        newUser.index = index
         data[index].on.push(newUser)
       } else { // remove user from field
         if(data[index].on.length === 0){ // no users to remove from field
           continue;
         }
         const rmUser = data[index].on.shift()
+        rmUser.index = -1;
         remainingUsers.push(rmUser)
       }
     }
@@ -79,7 +81,7 @@ class Controller extends React.Component {
   }
 
   componentDidMount() {
-  //  setInterval(this.updateState, 30000)
+  //  setInterval(this.updateState, 3000)
   }
 
   render(){
