@@ -1,4 +1,6 @@
 import React from 'react';
+import classNames from 'classnames';
+
 import './App.css';
 
 class App extends React.Component {
@@ -83,7 +85,7 @@ class App extends React.Component {
 
   const fieldsView = fields.map( (f, i) => (<div key={i} className="row">
     <label>{f.name}</label>
-  <div className="presence" data-index={i} ref={this.refRows[i]}>{f.on.map(renderAvatar)}</div>
+  <div className={classNames({'presence': true, 'off-screen': i <= lastAboveIndex || i >= lastBelowIndex})} data-index={i} ref={this.refRows[i]}>{f.on.map(renderAvatar)}</div>
     {f.type === "textarea" ? (<textarea></textarea>) : (<input type="text" />) }
   </div>));
     return (
