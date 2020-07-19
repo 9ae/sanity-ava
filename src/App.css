@@ -79,8 +79,9 @@
 .container .row textarea {
   width: 100%;
   outline: 0;
-  border: 1px solid #999;
+  border: 1px solid #aaa;
   border-radius: 4px;
+  margin-top: 5px;
 }
 
 .container .row input {
@@ -90,6 +91,7 @@
 
 .container .row textarea {
   height: 100px;
+  font-size: 1.5em;
 }
 
 .avatar {
@@ -98,16 +100,24 @@
   border-radius: 12px;
   position: relative;
   background-color: var(--user-color);
+  box-sizing: border-box;
+  border: 2px solid var(--user-color);
+  margin-left: -16px;
+  overflow: hidden;
+}
 
-  /* to remove */
-  text-align: center;
-  margin-left: -10px;
-  color: white;
+.avatar img {
+  width: 16px;
+  border: 2px solid white;
+  border-radius: 10px;
+
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .above-fold, .below-fold {
   position: fixed;
-  background-color: white;
   display: block;
   z-index: 5;
   right: 5%;
@@ -118,11 +128,16 @@
 
 }
 
+.above-fold .avatar, .below-fold .avatar{
+  overflow: visible;
+  box-shadow: rgba(0,0,0, 0.3) 0 1px 3px 0;
+}
+
 .above-fold {
   top: 5px;
 }
 
-.above-fold .avatar::after {
+.above-fold .avatar::before {
   content: " ";
   background-color: var(--user-color);
   display: inline-block;
@@ -141,7 +156,7 @@
 }
 
 
-.below-fold .avatar::after {
+.below-fold .avatar::before {
   content: " ";
   background-color: var(--user-color);
   display: inline-block;

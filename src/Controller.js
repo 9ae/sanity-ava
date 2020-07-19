@@ -16,17 +16,17 @@ const fields = [
 ];
 
 const users = [
-  {name: "Buffy", color: "#448AFF"},
-  {name: "Willow", color: "#FF3D00"},
-  {name: "Xander", color: "#64DD17"},
-  {name: "Giles", color: "#FFEA00"},
-  {name: "Drusilla", color: "#7C4DFF"},
-  {name: "Angel", color: "#64FFDA"},
-  {name: "Spike", color: "#FF4081"},
-  {name: "Tara", color: "#69F0AE"},
-  {name: "Cordelia", color: "#FFAB40"},
-  {name: "Faith", color: "#ff1744"},
-  {name: "Oz", color: "#18FFFF"}
+  {name: "Buffy", color: "#4bc7eb", img: "avatar_01.png"},
+  {name: "Willow", color: "#a3e5d9", img: "avatar_02.png"},
+  {name: "Xander", color: "#6dccb8", img: "avatar_03.png"},
+  {name: "Giles", color: "#49c8eb", img: "avatar_04.png"},
+  {name: "Drusilla", color: "#ea5cbe", img: "avatar_05.png"},
+  {name: "Angel", color: "#8bc7eb", img: "avatar_06.png"},
+  {name: "Spike", color: "#7f6892", img: "avatar_07.png"},
+  {name: "Tara", color: "#a674a5", img: "avatar_08.png"},
+  {name: "Cordelia", color: "#ec6d4a", img: "avatar_09.png"},
+  {name: "Faith", color: "#9994d4", img: "avatar_10.png"},
+  {name: "Oz", color: "#fd8103", img: "avatar_11.png"}
 ]
 
 function randomInt(max){

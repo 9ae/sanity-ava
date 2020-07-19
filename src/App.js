@@ -77,7 +77,7 @@ class App extends React.Component {
   const {lastAboveIndex, lastBelowIndex} = this.state
 
   // TODO throw in its own component?
-  const renderAvatar = (u) => (<div key={u.name} className="avatar" style={{"--user-color": u.color}}>{u.name.charAt(0)}</div>)
+  const renderAvatar = (u) => (<div key={u.name} className="avatar" style={{"--user-color": u.color}}><img src={"images/"+ u.img} /></div>)
 
   const aboveUsers = lastAboveIndex !== -1 ? fields.slice(0, lastAboveIndex + 1).map(f => f.on).flat().map(renderAvatar) : "";
 
