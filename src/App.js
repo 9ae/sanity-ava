@@ -23,21 +23,19 @@ class App extends React.Component {
         const indexStr = row.target.getAttribute('data-index');
         console.log(`${indexStr} changed`,row)
           const index = parseInt(indexStr);
-          if(row.boundingClientRect.y < 0){ // is above fold
-            if(row.isIntersecting){
-              this.setState({lastAboveIndex : index - 1})
-            } else {
-              this.setState({lastAboveIndex: index})
-            }
-          } else { // is below fold
-              if(row.isIntersecting){ // row is now within view,
-                this.setState({lastBelowIndex: index + 1 })
-              } else {
-                this.setState({lastBelowIndex: index})
-              }
-              
+        if(row.isIntersecting){ // shows up in viewport
+          if(this.state.lastAboveIndex >= index){
+            this.setState({lastAboveIndex : index - 1})
+          } else if (this.state.lastBelowIndex <=index){
+            this.setState({lastBelowIndex: index + 1 })
           }
-        
+        } else { // hides in viewport
+          if(row.boundingClientRect.y < 0){
+            this.setState({lastAboveIndex : index})
+          } else {
+            this.setState({lastBelowIndex: index})
+          }
+        }
       })
     } else { // init above and below fold indicies
       watching.forEach(row => {
@@ -64,7 +62,7 @@ class App extends React.Component {
 
   componentDidMount() {
     console.log('App componentDidMount')
-    const observer = new IntersectionObserver(this.onIntersectChange, {threshold: 0.8})
+    const observer = new IntersectionObserver(this.onIntersectChange, {threshold: 1.0})
 
     this.refRows.forEach((e) => {
       observer.observe(e.current)
@@ -83,9 +81,9 @@ class App extends React.Component {
 
   const belowUsers = lastBelowIndex !== fields.length ? fields.slice(lastBelowIndex).map(f => f.on).reverse().flat().map(renderAvatar) : ""
 
-  const fieldsView = fields.map( (f, i) => (<div key={i} data-index={i} className="row" ref={this.refRows[i]}>
+  const fieldsView = fields.map( (f, i) => (<div key={i} className="row">
     <label>{f.name}</label>
-  <div className="presence">{f.on.map(renderAvatar)}</div>
+  <div className="presence" data-index={i} ref={this.refRows[i]}>{f.on.map(renderAvatar)}</div>
     {f.type === "textarea" ? (<textarea></textarea>) : (<input type="text" />) }
   </div>));
     return (
