@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import './App.css';
+import Avatar from './Avatar';
 
 class App extends React.Component {
 
@@ -11,7 +12,8 @@ class App extends React.Component {
       message: "hey there",
       lastAboveIndex: -1,
       lastBelowIndex: this.props.fields.length,
-      initIndex: false
+      initIndex: false, 
+      onEdge: []
     }
     this.refRows = []
     for(var i=0; i<this.props.fields.length; i++){
@@ -25,13 +27,14 @@ class App extends React.Component {
         const indexStr = row.target.getAttribute('data-index');
         console.log(`${indexStr} changed`,row)
           const index = parseInt(indexStr);
-        if(row.isIntersecting){ // shows up in viewport
+        if(row.intersectionRatio > 0.99){ // shows up in viewport
           if(this.state.lastAboveIndex >= index){
             this.setState({lastAboveIndex : index - 1})
           } else if (this.state.lastBelowIndex <=index){
             this.setState({lastBelowIndex: index + 1 })
           }
-        } else { // hides in viewport
+        } // TODO add inbetween state
+        else { // hides in viewport
           if(row.boundingClientRect.y < 0){
             this.setState({lastAboveIndex : index})
           } else {
@@ -43,7 +46,7 @@ class App extends React.Component {
       watching.forEach(row => {
         const indexStr = row.target.getAttribute('data-index');
         console.log(`${indexStr} changed`,row)
-        if(!row.isIntersecting){
+        if(row.intersectionRatio < 0.99){
           const index = parseInt(indexStr);
           if(row.boundingClientRect.y < 0){
             // is above fold
@@ -64,12 +67,19 @@ class App extends React.Component {
 
   componentDidMount() {
     console.log('App componentDidMount')
-    const observer = new IntersectionObserver(this.onIntersectChange, {threshold: 1.0})
+    const observer = new IntersectionObserver(this.onIntersectChange, {threshold: 0.5})
 
     this.refRows.forEach((e) => {
       observer.observe(e.current)
     })
   }
+
+  componentDidUpdate(prevProps, prevState){
+    if (this.state.lastAboveIndex !== prevState.lastAboveIndex){
+
+    }
+  }
+
 
   render() {
 
@@ -77,7 +87,7 @@ class App extends React.Component {
   const {lastAboveIndex, lastBelowIndex} = this.state
 
   // TODO throw in its own component?
-  const renderAvatar = (u) => (<div key={u.name} className="avatar" style={{"--user-color": u.color}}><img src={"images/"+ u.img} /></div>)
+  const renderAvatar = (u) => (<Avatar key={u.name} user={u} />);
 
   const aboveUsers = lastAboveIndex !== -1 ? fields.slice(0, lastAboveIndex + 1).map(f => f.on).flat().map(renderAvatar) : "";
 
@@ -85,7 +95,7 @@ class App extends React.Component {
 
   const fieldsView = fields.map( (f, i) => (<div key={i} className="row">
     <label>{f.name}</label>
-  <div className={classNames({'presence': true, 'off-screen': i <= lastAboveIndex || i >= lastBelowIndex})} data-index={i} ref={this.refRows[i]}>{f.on.map(renderAvatar)}</div>
+    <div className={classNames({'presence': true, 'off-screen': i <= lastAboveIndex || i >= lastBelowIndex})} data-index={i} ref={this.refRows[i]}>{f.on.map(renderAvatar)}</div>
     {f.type === "textarea" ? (<textarea></textarea>) : (<input type="text" />) }
   </div>));
     return (

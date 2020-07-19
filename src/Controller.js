@@ -16,17 +16,17 @@ const fields = [
 ];
 
 const users = [
-  {name: "Buffy", color: "#4bc7eb", img: "avatar_01.png"},
-  {name: "Willow", color: "#a3e5d9", img: "avatar_02.png"},
-  {name: "Xander", color: "#6dccb8", img: "avatar_03.png"},
-  {name: "Giles", color: "#49c8eb", img: "avatar_04.png"},
-  {name: "Drusilla", color: "#ea5cbe", img: "avatar_05.png"},
-  {name: "Angel", color: "#8bc7eb", img: "avatar_06.png"},
-  {name: "Spike", color: "#7f6892", img: "avatar_07.png"},
-  {name: "Tara", color: "#a674a5", img: "avatar_08.png"},
-  {name: "Cordelia", color: "#ec6d4a", img: "avatar_09.png"},
-  {name: "Faith", color: "#9994d4", img: "avatar_10.png"},
-  {name: "Oz", color: "#fd8103", img: "avatar_11.png"}
+  {name: "Buffy", color: "#4bc7eb", img: "avatar_01.png", aux:''},
+  {name: "Willow", color: "#a3e5d9", img: "avatar_02.png", aux:''},
+  {name: "Xander", color: "#6dccb8", img: "avatar_03.png", aux:''},
+  {name: "Giles", color: "#49c8eb", img: "avatar_04.png", aux:''},
+  {name: "Drusilla", color: "#ea5cbe", img: "avatar_05.png", aux:''},
+  {name: "Angel", color: "#8bc7eb", img: "avatar_06.png", aux:''},
+  {name: "Spike", color: "#7f6892", img: "avatar_07.png", aux:''},
+  {name: "Tara", color: "#a674a5", img: "avatar_08.png", aux:''},
+  {name: "Cordelia", color: "#ec6d4a", img: "avatar_09.png", aux:''},
+  {name: "Faith", color: "#9994d4", img: "avatar_10.png", aux:''},
+  {name: "Oz", color: "#fd8103", img: "avatar_11.png", aux:''}
 ]
 
 function randomInt(max){
@@ -79,7 +79,7 @@ class Controller extends React.Component {
   }
 
   componentDidMount() {
-    setInterval(this.updateState, 30000)
+  //  setInterval(this.updateState, 30000)
   }
 
   render(){
