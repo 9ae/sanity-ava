@@ -1,6 +1,6 @@
 # Project Notes
 
-![Final screenshot](master/images/final.png)
+![Final screenshot](images/final.png)
 
 ## Goal
 Architect a presence UI for a content editor, where you can see who else is on which fields. For fields not on the screen (above/below page fold), users presence is hinted at with a location marker.
