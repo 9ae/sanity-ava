@@ -1,0 +1,19 @@
+
+.fold.above, .fold.below {
+  position: fixed;
+  display: block;
+  z-index: 5;
+  right: 5%;
+
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row-reverse;
+}
+
+.fold.above {
+  top: 0;
+}
+
+.fold.below {
+  bottom: 0;
+}

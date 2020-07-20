@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 
+import './Avatar.css';
+
 function Avatar (props) {
   const {user} = props;
 

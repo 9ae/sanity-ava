@@ -3,6 +3,7 @@ import classNames from 'classnames';
 
 import './App.css';
 import Avatar from './Avatar';
+import FoldPreview from './FoldPreview';
 
 const ScrollDirection = {
   UP: -1,
@@ -12,8 +13,8 @@ const ScrollDirection = {
 
 const EdgeStage = {
   NONE: '',
-  POPPING: 'popping',
-  POPPED: 'popped'
+  POPPING: 'popping', // about to appear if you keep scrolling in the same direction. overlap > 50%
+  POPPED: 'popped' // most likely going to appear. overlap > 90%
 }
 
 class App extends React.Component {
@@ -21,11 +22,16 @@ class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
+      // Keeps track of field above/below fold
       lastAboveIndex: -1,
       lastBelowIndex: this.props.fields.length,
       initIndex: false,
-      onEdgeIndex: -1,
-      onEdgeStage: EdgeStage.NONE,
+
+      // Field that are about to be visible
+      edgeIndex: -1,
+      edgeStage: EdgeStage.NONE,
+
+      // Scroll tracker to keep track of scroll direction
       lastScrollPos: 0,
       scrollDirection: ScrollDirection.UNKNOWN
     }
@@ -35,7 +41,6 @@ class App extends React.Component {
       this.refRows[i] = React.createRef();
     }
 
-    // this.pageRef = React.createRef();
   }
 
   onIntersectChange = (watching, observer) => {
@@ -50,10 +55,10 @@ class App extends React.Component {
           } else if (this.state.lastBelowIndex <=index){
             this.setState({lastBelowIndex: index + 1 })
           }
-        } else if (row.intersectionRatio >= 0.9){
-          this.setState({onEdgeIndex: index, onEdgeStage: EdgeStage.POPPED})
+        } else if (row.intersectionRatio >= 0.8){
+          this.setState({edgeIndex: index, edgeStage: EdgeStage.POPPED})
         } else if (row.intersectionRatio >= 0.5) { // about to pop into view
-          this.setState({onEdgeIndex: index, onEdgeStage: EdgeStage.POPPING})
+          this.setState({edgeIndex: index, edgeStage: EdgeStage.POPPING})
         }
         else { // hides in viewport
           if(row.boundingClientRect.y < 0){
@@ -95,35 +100,19 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    const observer = new IntersectionObserver(this.onIntersectChange, {threshold: [0.5, 0.9, 1.0]})
+    const observer = new IntersectionObserver(this.onIntersectChange, {threshold: [0.5, 0.8, 1.0]})
 
     this.refRows.forEach((e) => {
       observer.observe(e.current)
     })
   }
 
-  /*
-  componentDidUpdate(prevProps, prevState){
-    if (this.state.lastAboveIndex !== prevState.lastAboveIndex){
-
-    }
-  }
-  */
-
-
   render() {
 
   const {fields} = this.props
-  const {lastAboveIndex, lastBelowIndex, onEdgeIndex, onEdgeStage, scrollDirection} = this.state
+  const {lastAboveIndex, lastBelowIndex, edgeIndex, edgeStage, scrollDirection} = this.state
 
   const renderAvatar = (u) => (<Avatar key={u.name} user={u} />);
-
-  const renderPreviewAvatar = (allow, u) => (<Avatar key={u.name} user={u}
-    stage={allow && onEdgeIndex === u.index ? onEdgeStage : null}
-  />);
-
-  const aboveUsers = lastAboveIndex !== -1 ? fields.slice(0, lastAboveIndex + 1).map(f => f.on).reverse().flat().map(u => renderPreviewAvatar(scrollDirection === ScrollDirection.UP, u)) : "";
-  const belowUsers = lastBelowIndex !== fields.length ? fields.slice(lastBelowIndex).map(f => f.on).flat().map(u => renderPreviewAvatar(scrollDirection === ScrollDirection.DOWN, u)) : ""
 
   const fieldsView = fields.map( (f, i) => (<div key={i} className="row">
     <label>{f.name}</label>
@@ -136,13 +125,24 @@ class App extends React.Component {
 
     return (
       <div id="page" onScroll={this.onPageScroll}>
-        <div className="above-fold">{aboveUsers}</div>
+        { lastAboveIndex !== -1 && <FoldPreview
+          placement="above"
+          active={scrollDirection === ScrollDirection.UP}
+          edgeIndex={edgeIndex}
+          edgeStage={edgeStage}
+          users={fields.slice(0, lastAboveIndex + 1).map(f => f.on).reverse().flat()}
+        /> }
         <div className="container">{fieldsView}</div>
-        <div className="below-fold">{belowUsers}</div>
+        { lastBelowIndex !== fields.length && <FoldPreview
+          placement="below"
+          active={scrollDirection === ScrollDirection.DOWN}
+          edgeIndex={edgeIndex}
+          edgeStage={edgeStage}
+          users={fields.slice(lastBelowIndex).map(f => f.on).flat()}
+        /> }
       </div>
     );
   }
 }
-
 
 export default App;
