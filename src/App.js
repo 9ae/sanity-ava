@@ -4,6 +4,18 @@ import classNames from 'classnames';
 import './App.css';
 import Avatar from './Avatar';
 
+const ScrollDirection = {
+  UP: -1,
+  UNKNOWN: 0,
+  DOWN: 1
+}
+
+const EdgeStage = {
+  NONE: '',
+  POPPING: 'popping',
+  POPPED: 'popped'
+}
+
 class App extends React.Component {
 
   constructor(props){
@@ -12,14 +24,18 @@ class App extends React.Component {
       lastAboveIndex: -1,
       lastBelowIndex: this.props.fields.length,
       initIndex: false,
-      popping: -1,
-      popped: -1
+      onEdgeIndex: -1,
+      onEdgeStage: EdgeStage.NONE,
+      lastScrollPos: 0,
+      scrollDirection: ScrollDirection.UNKNOWN
     }
 
     this.refRows = []
     for(var i=0; i<this.props.fields.length; i++){
       this.refRows[i] = React.createRef();
     }
+
+    // this.pageRef = React.createRef();
   }
 
   onIntersectChange = (watching, observer) => {
@@ -35,9 +51,9 @@ class App extends React.Component {
             this.setState({lastBelowIndex: index + 1 })
           }
         } else if (row.intersectionRatio >= 0.9){
-          this.setState({popped: index})
+          this.setState({onEdgeIndex: index, onEdgeStage: EdgeStage.POPPED})
         } else if (row.intersectionRatio >= 0.5) { // about to pop into view
-          this.setState({popping: index})
+          this.setState({onEdgeIndex: index, onEdgeStage: EdgeStage.POPPING})
         }
         else { // hides in viewport
           if(row.boundingClientRect.y < 0){
@@ -71,6 +87,13 @@ class App extends React.Component {
     }
   }
 
+  onPageScroll = (evt) => {
+    this.setState({
+      lastScrollPos: evt.target.scrollTop,
+      scrollDirection: evt.target.scrollTop > this.state.lastScrollPos ? ScrollDirection.DOWN : ScrollDirection.UP
+    })
+  }
+
   componentDidMount() {
     const observer = new IntersectionObserver(this.onIntersectChange, {threshold: [0.5, 0.9, 1.0]})
 
@@ -79,27 +102,28 @@ class App extends React.Component {
     })
   }
 
+  /*
   componentDidUpdate(prevProps, prevState){
     if (this.state.lastAboveIndex !== prevState.lastAboveIndex){
 
     }
   }
+  */
 
 
   render() {
 
   const {fields} = this.props
-  const {lastAboveIndex, lastBelowIndex, popping, popped} = this.state
+  const {lastAboveIndex, lastBelowIndex, onEdgeIndex, onEdgeStage, scrollDirection} = this.state
 
   const renderAvatar = (u) => (<Avatar key={u.name} user={u} />);
 
-  const renderPreviewAvatar = (u) => (<Avatar key={u.name} user={u}
-    popping={popping === u.index}
-    popped={popped === u.index}  
+  const renderPreviewAvatar = (allow, u) => (<Avatar key={u.name} user={u}
+    stage={allow && onEdgeIndex === u.index ? onEdgeStage : null}
   />);
 
-  const aboveUsers = lastAboveIndex !== -1 ? fields.slice(0, lastAboveIndex + 1).map(f => f.on).reverse().flat().map(renderPreviewAvatar) : "";
-  const belowUsers = lastBelowIndex !== fields.length ? fields.slice(lastBelowIndex).map(f => f.on).flat().map(renderPreviewAvatar) : ""
+  const aboveUsers = lastAboveIndex !== -1 ? fields.slice(0, lastAboveIndex + 1).map(f => f.on).reverse().flat().map(u => renderPreviewAvatar(scrollDirection === ScrollDirection.UP, u)) : "";
+  const belowUsers = lastBelowIndex !== fields.length ? fields.slice(lastBelowIndex).map(f => f.on).flat().map(u => renderPreviewAvatar(scrollDirection === ScrollDirection.DOWN, u)) : ""
 
   const fieldsView = fields.map( (f, i) => (<div key={i} className="row">
     <label>{f.name}</label>
@@ -111,7 +135,7 @@ class App extends React.Component {
 
 
     return (
-      <div id="page">
+      <div id="page" onScroll={this.onPageScroll}>
         <div className="above-fold">{aboveUsers}</div>
         <div className="container">{fieldsView}</div>
         <div className="below-fold">{belowUsers}</div>

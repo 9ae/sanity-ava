@@ -81,7 +81,7 @@ class Controller extends React.Component {
   }
 
   componentDidMount() {
-  //  setInterval(this.updateState, 3000)
+    setInterval(this.updateState, 45000)
   }
 
   render(){

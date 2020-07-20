@@ -4,15 +4,10 @@ import classNames from 'classnames';
 function Avatar (props) {
   const {user} = props;
 
-  const popping = props.popping || false;
-  const popped = props.popped || false;
+  const stage = props.stage ? (' '+ props.stage) : ''
 
   return (<div key={user.name}
-    className={classNames({
-      "avatar": true,
-      "popping": popping,
-      "popped": popped
-    })}
+    className={"avatar" + stage}
     style={{"--user-color": user.color}}><img src={"images/"+ user.img} /></div>);
 }
 
