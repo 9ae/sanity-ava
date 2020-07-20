@@ -1,11 +1,10 @@
-# Project Notes
-
 ![Final screenshot](images/final.png)
+[Demo App](https://alice-sanity-ava.netlify.app/)
 
-## Goal
+# Goal
 Architect a presence UI for a content editor, where you can see who else is on which fields. For fields not on the screen (above/below page fold), users presence is hinted at with a location marker.
 
-## Assumptions
+# Assumptions
 
 Before we proceed, some assumptions made to narrow scope are:
 - Form fields doesn't change are looking (maybe it will change onload)
@@ -13,7 +12,7 @@ Before we proceed, some assumptions made to narrow scope are:
 - Users can: change their focus field, leave page, enter page
 - Users who are not focused on any field are not visible
 
-## Architecture
+# Architecture
 
 Our React app is structured with the following components:
 
@@ -32,20 +31,20 @@ Inside `FieldRow` there's a div that wraps all the avatars, and attached to it i
 
 The [Controller](src/Controller.js) component, which is a wrapper around App, is there to mock server push messages. It naively shuffles users around the fields to simulate actual users moving around the page. In a real world environment, App will probably get its field props from a global state manager, which will be updated by the middlewear binding backend updates to global state.
 
-## Approach
+# Approach
 
-### 1. Implement on screen detection with Intersect Observer
+## 1. Implement on screen detection with Intersect Observer
 
 ![Detect off screen](images/proof.gif)
 
-### 2. Mock users moving around
+## 2. Mock users moving around
 
 ![Add images and UI clean up](images/style.gif)
 
-### 3. Animate transitions
+## 3. Animate transitions
 
 ![Animate transitions](images/anim.gif)
 
-### 4. Clean up & Componentize
+## 4. Clean up & Componentize
 
-## Decisions & Considerations
+# Decisions & Considerations

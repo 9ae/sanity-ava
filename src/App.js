@@ -117,6 +117,7 @@ class App extends React.Component {
 
     return (
       <div id="page" onScroll={this.onPageScroll}>
+        <div className="container">
         {lastAboveIndex !== -1 && (
           <FoldPreview
             placement="above"
@@ -131,7 +132,7 @@ class App extends React.Component {
           />
         )}
 
-        <div className="container">
+        
           {fields.map((f, i) => (
             <FieldRow
               key={i}
@@ -141,7 +142,7 @@ class App extends React.Component {
               isOffScreen={i <= lastAboveIndex || i >= lastBelowIndex}
             />
           ))}
-        </div>
+       
 
         {lastBelowIndex !== fields.length && (
           <FoldPreview
@@ -154,7 +155,7 @@ class App extends React.Component {
               .map((f) => f.on)
               .flat()}
           />
-        )}
+        )}</div>
       </div>
     );
   }

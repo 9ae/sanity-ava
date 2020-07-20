@@ -1,12 +1,12 @@
 .fold.above,
 .fold.below {
-  position: fixed;
+  position: sticky;
   display: block;
   z-index: 5;
-  right: 5%;
+  width: 100%;
 
   display: flex;
-  justify-content: flex-start;
+  justify-content: right;
   flex-direction: row-reverse;
 }
 
