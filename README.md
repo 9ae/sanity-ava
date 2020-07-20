@@ -18,10 +18,13 @@ Before we proceed, some assumptions made to narrow scope are:
 Our React app is structured with the following components:
 
 [App](src/App.js)
+
 > [FoldPreview](src/FoldPreview.js) (above) shows users above the fold
 > > list of [Avatar](src/Avatar.js)
+
 > list of [FieldRow](src/FieldRow.js) each row has a label, avatars of users focused, and input field
 > > list of [Avatar](src/Avatar.js)
+
 > [FoldPreview](src/FoldPreview.js) (below) shows users below the fold
 > > list of [Avatar](src/Avatar.js)
 
