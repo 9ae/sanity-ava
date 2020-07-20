@@ -48,9 +48,10 @@
 
 /* Avatar in fold preview */
 
-.fold.above .avatar, .fold.below .avatar{
+.fold.above .avatar,
+.fold.below .avatar {
   overflow: visible;
-  box-shadow: rgba(0,0,0, 0.3) 0 1px 3px 0;
+  box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 0;
   transform: scale(0.6);
   transition: transform 0.5s;
 }
@@ -99,7 +100,7 @@
 
 .fold.above .avatar.popped,
 .fold.below .avatar.popped {
-  transform: scale(1.0);
+  transform: scale(1);
 }
 
 .fold.above .avatar.popped::before,

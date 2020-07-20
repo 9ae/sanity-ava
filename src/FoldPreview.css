@@ -1,5 +1,5 @@
-
-.fold.above, .fold.below {
+.fold.above,
+.fold.below {
   position: fixed;
   display: block;
   z-index: 5;

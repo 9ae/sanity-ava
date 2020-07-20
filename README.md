@@ -1,8 +1,8 @@
 # Project Notes
 
 ## Assumptions
-- Form field doesn't change while users are looking (maybe it will change onload)
 
+- Form field doesn't change while users are looking (maybe it will change onload)
 
 ---
 

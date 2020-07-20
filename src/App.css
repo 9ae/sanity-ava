@@ -4,14 +4,13 @@
   overflow: scroll;
 }
 
-
 .container {
   width: 90%;
   max-width: 800px;
   margin: 50px auto;
   position: relative;
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
 }
 
 .container .row {
@@ -47,11 +46,10 @@
 
 .container .row input {
   font-size: 1.5em;
-  height: 2.0em;
+  height: 2em;
 }
 
 .container .row textarea {
   height: 100px;
   font-size: 1.5em;
 }
-
