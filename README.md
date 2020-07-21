@@ -1,5 +1,5 @@
 ![Final screenshot](images/final.png)
-[Demo App](https://alice-sanity-ava.netlify.app/) the avatars on the fields are randomly generated so you may have to refresh a few times to get one with more active users.
+You can play with this on the [Demo App](https://alice-sanity-ava.netlify.app/). The avatars on the fields are randomly generated so you may have to refresh a few times to get one with more active users.
 
 # Goal
 Architect a presence UI for a content editor, where you can see who else is on which fields. For fields not on the screen (above/below page fold), users presence is hinted at with a location marker.
